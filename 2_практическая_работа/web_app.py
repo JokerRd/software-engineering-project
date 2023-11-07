@@ -22,7 +22,8 @@ def calculate_average_score(first_text: str, second_text: str, separators: list)
     total_score = sum(map(lambda row: max(row), cos_sim_arr))
     average_score = total_score / length_row
     return average_score
-    
+
+
 def compare_text(first_text: str, second_text: str, options: list):
     separators = list(map(lambda option: option_to_separator(option), options))
     average_score = calculate_average_score(first_text, second_text, separators)
