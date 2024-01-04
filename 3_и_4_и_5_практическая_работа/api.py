@@ -28,7 +28,7 @@ def calculate_text_similarity(compare_text: CompareTextRequest):
     similarity_tensor = calculate_average_score(compare_text.first_text,
                                                 compare_text.second_text,
                                                 compare_text.separators)
-    similarity = float(similarity_tensor)
+    similarity = round(float(similarity_tensor), 6)
     if compare_text.is_percent:
         return ShortResult(similarity=convert_to_percent(similarity))
     return ShortResult(similarity=similarity)
