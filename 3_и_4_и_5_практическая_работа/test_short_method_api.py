@@ -23,7 +23,6 @@ second_raw_text = ("Задумка по реализации языка появ
                    "проектировался как объектно-ориентированный язык.")
 
 short_analysis_url = "/model/text/analysis/short"
-full_analysis_url = "/model/text/analysis/full"
 
 
 def test_identical_similarity_when_text_identical():
