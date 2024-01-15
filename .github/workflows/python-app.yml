@@ -26,7 +26,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pytest
-          pip install -r 3_и_4_и_5_практическая_работа/requirements.txt
+          pip install -r Итоговый_проект/requirements.txt
       - name: Test with pytest
         run: |
           pytest
