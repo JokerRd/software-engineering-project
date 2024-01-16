@@ -29,4 +29,4 @@ jobs:
           pip install -r Итоговый_проект/requirements.txt
       - name: Test with pytest
         run: |
-          cd ./Итоговый_проект && pytest
+          export PYTHONPATH=./Итоговый_проект && pytest
