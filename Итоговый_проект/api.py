@@ -1,3 +1,4 @@
+import copy
 from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -43,7 +44,7 @@ def get_full_stat_compare_text(compare_text: CompareTextRequest):
                                   compare_text.second_text,
                                   compare_text.separators)
     if compare_text.is_percent:
-        return list(map(lambda item: modify_stat(item), stats))
+        return list(map(transform_similarity_to_percent, stats))
     return stats
 
 
@@ -60,9 +61,12 @@ async def validation_exception_handler(request: Request,
     )
 
 
-def modify_stat(stat):
-    stat['similarity'] = convert_to_percent(stat['similarity'])
-    return stat
+def transform_similarity_to_percent(stat):
+    similarity_as_number = stat['similarity']
+    similarity_as_percent = convert_to_percent(similarity_as_number)
+    new_stat = copy.deepcopy(stat)
+    new_stat['similarity'] = similarity_as_percent
+    return new_stat
 
 
 def convert_to_percent(similarity: float):
