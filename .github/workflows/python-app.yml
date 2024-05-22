@@ -30,7 +30,7 @@ jobs:
           pip install -r Итоговый_проект/requirements.txt
       - name: Lint with flake8
         run: |
-          export PYTHONPATH=./Итоговый_проект && flake8
+          flake8 ./Итоговый_проект
       - name: Test with pytest
         run: |
           export PYTHONPATH=./Итоговый_проект && pytest
