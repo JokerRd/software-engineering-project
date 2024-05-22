@@ -49,11 +49,17 @@ def get_full_stat_compare_text(compare_text: CompareTextRequest):
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request,
                                        exc: RequestValidationError):
-    custom = list(
-        map(lambda item: {"field": item['loc'][-1], "message": item['msg']},
-            exc.errors()))
+    custom_error_message = list(map(create_custom_error_message, exc.errors()))
+    error_response = create_error_response(custom_error_message, exc.body)
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
-        content=jsonable_encoder(
-            {"validation_errors": custom, "body": exc.body}),
+        content=jsonable_encoder(error_response),
     )
+
+
+def create_custom_error_message(error):
+    return {"field": error['loc'][-1], "message": error['msg']}
+
+
+def create_error_response(error_message, body):
+    return {"validation_errors": error_message, "body": body}
