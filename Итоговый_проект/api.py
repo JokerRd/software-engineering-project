@@ -1,14 +1,12 @@
-import copy
 from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, Field
 from starlette import status
 from starlette.responses import JSONResponse
-
 from model import get_stat_by_sentences
-
 from model import calculate_average_score
+from utils import convert_to_percent, transform_similarity_to_percent
 
 app = FastAPI()
 
@@ -59,16 +57,3 @@ async def validation_exception_handler(request: Request,
         content=jsonable_encoder(
             {"validation_errors": custom, "body": exc.body}),
     )
-
-
-def transform_similarity_to_percent(stat):
-    similarity_as_number = stat['similarity']
-    similarity_as_percent = convert_to_percent(similarity_as_number)
-    new_stat = copy.deepcopy(stat)
-    new_stat['similarity'] = similarity_as_percent
-    return new_stat
-
-
-def convert_to_percent(similarity: float):
-    rounded_percent_similarity = round(similarity * 100, 2)
-    return f"{rounded_percent_similarity}%"
