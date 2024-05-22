@@ -4,10 +4,9 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, Field
 from starlette import status
 from starlette.responses import JSONResponse
-
 from model import get_stat_by_sentences
-
 from model import calculate_average_score
+from utils import convert_to_percent, transform_similarity_to_percent
 
 app = FastAPI()
 
@@ -43,28 +42,24 @@ def get_full_stat_compare_text(compare_text: CompareTextRequest):
                                   compare_text.second_text,
                                   compare_text.separators)
     if compare_text.is_percent:
-        return list(map(lambda item: modify_stat(item), stats))
+        return list(map(transform_similarity_to_percent, stats))
     return stats
 
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request,
                                        exc: RequestValidationError):
-    custom = list(
-        map(lambda item: {"field": item['loc'][-1], "message": item['msg']},
-            exc.errors()))
+    custom_error_message = list(map(create_custom_error_message, exc.errors()))
+    error_response = create_error_response(custom_error_message, exc.body)
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
-        content=jsonable_encoder(
-            {"validation_errors": custom, "body": exc.body}),
+        content=jsonable_encoder(error_response),
     )
 
 
-def modify_stat(stat):
-    stat['similarity'] = convert_to_percent(stat['similarity'])
-    return stat
+def create_custom_error_message(error):
+    return {"field": error['loc'][-1], "message": error['msg']}
 
 
-def convert_to_percent(similarity: float):
-    rounded_percent_similarity = round(similarity * 100, 2)
-    return f"{rounded_percent_similarity}%"
+def create_error_response(error_message, body):
+    return {"validation_errors": error_message, "body": body}
