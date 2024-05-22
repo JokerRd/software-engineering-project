@@ -2,8 +2,10 @@ from sentence_transformers import SentenceTransformer, util
 import re
 
 
-def calculate_average_score(first_text: str, second_text: str, separators: list):
-    cos_sim_arr, first_text_sentences, second_text_sentences = compare_text(first_text, second_text, separators)
+def calculate_average_score(first_text: str, second_text: str,
+                            separators: list):
+    cos_sim_arr, first_text_sentences, second_text_sentences = compare_text(
+        first_text, second_text, separators)
     length_row = len(first_text_sentences)
     total_score = sum(map(lambda row: max(row), cos_sim_arr))
     average_score = total_score / length_row
@@ -11,7 +13,8 @@ def calculate_average_score(first_text: str, second_text: str, separators: list)
 
 
 def get_stat_by_sentences(first_text: str, second_text: str, separators: list):
-    cos_sim_arr, first_text_sentences, second_text_sentences = compare_text(first_text, second_text, separators)
+    cos_sim_arr, first_text_sentences, second_text_sentences = compare_text(
+        first_text, second_text, separators)
     result = []
     for i in range(len(cos_sim_arr)):
         for j in range(len(cos_sim_arr[i])):
@@ -31,8 +34,10 @@ def compare_text(first_text: str, second_text: str, separators: list):
 
     first_text_sentences_raw = re.split(regex_separators, first_text)
     second_text_sentences_raw = re.split(regex_separators, second_text)
-    first_text_sentences = trim_spaces(filter_empty_sentences(first_text_sentences_raw))
-    second_text_sentences = trim_spaces(filter_empty_sentences(second_text_sentences_raw))
+    first_text_sentences = trim_spaces(
+        filter_empty_sentences(first_text_sentences_raw))
+    second_text_sentences = trim_spaces(
+        filter_empty_sentences(second_text_sentences_raw))
 
     model = SentenceTransformer('sentence-transformers/LaBSE')
 
@@ -49,5 +54,3 @@ def filter_empty_sentences(sentences: list[str]):
 
 def trim_spaces(sentences: list[str]):
     return list(map(lambda item: item.strip(), sentences))
-
-

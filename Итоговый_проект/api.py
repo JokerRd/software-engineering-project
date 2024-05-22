@@ -23,7 +23,8 @@ class ShortResult(BaseModel):
     similarity: float | str
 
 
-@app.post("/model/text/analysis/short", summary="Метод расчитывает сходство двух текстов")
+@app.post("/model/text/analysis/short",
+          summary="Метод расчитывает сходство двух текстов")
 def calculate_text_similarity(compare_text: CompareTextRequest):
     similarity_tensor = calculate_average_score(compare_text.first_text,
                                                 compare_text.second_text,
@@ -34,21 +35,28 @@ def calculate_text_similarity(compare_text: CompareTextRequest):
     return ShortResult(similarity=similarity)
 
 
-@app.post("/model/text/analysis/full", summary="Метод расчитывает сходство предложений двух "
-                                      "текстов по принципу каждое с каждым")
+@app.post("/model/text/analysis/full",
+          summary="Метод расчитывает сходство предложений"
+                  " двух текстов по принципу каждое с каждым")
 def get_full_stat_compare_text(compare_text: CompareTextRequest):
-    stats = get_stat_by_sentences(compare_text.first_text, compare_text.second_text, compare_text.separators)
+    stats = get_stat_by_sentences(compare_text.first_text,
+                                  compare_text.second_text,
+                                  compare_text.separators)
     if compare_text.is_percent:
         return list(map(lambda item: modify_stat(item), stats))
     return stats
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    custom = list(map(lambda item: {"field": item['loc'][-1], "message": item['msg']}, exc.errors()))
+async def validation_exception_handler(request: Request,
+                                       exc: RequestValidationError):
+    custom = list(
+        map(lambda item: {"field": item['loc'][-1], "message": item['msg']},
+            exc.errors()))
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
-        content=jsonable_encoder({"validation_errors": custom, "body": exc.body}),
+        content=jsonable_encoder(
+            {"validation_errors": custom, "body": exc.body}),
     )
 
 
